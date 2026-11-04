@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "3det-adaptavel-mvp",
+  "name": "3D&T Adaptável",
+  "version": "1.1.1-mvp",
+  "description": "Regras do simulador planejado: 8 pontos, atributos de 0 a 5, PV = Resistência × 5 e rolagens d6. Sem crítico ou falha automáticos. As habilidades abaixo são exemplos editáveis desta adaptação.",
+  "attributes": [
+    { "id": "forca", "name": "Força", "short": "F", "min": 0, "max": 5, "defaultValue": 0, "cost": 1, "description": "Potência dos ataques corpo a corpo." },
+    { "id": "habilidade", "name": "Habilidade", "short": "H", "min": 0, "max": 5, "defaultValue": 0, "cost": 1, "description": "Iniciativa, ataque, defesa e testes gerais." },
+    { "id": "resistencia", "name": "Resistência", "short": "R", "min": 0, "max": 5, "defaultValue": 0, "cost": 1, "description": "Cada ponto concede 5 PV. Com zero, o personagem inicia incapacitado." },
+    { "id": "armadura", "name": "Armadura", "short": "A", "min": 0, "max": 5, "defaultValue": 0, "cost": 1, "description": "Proteção somada à defesa." },
+    { "id": "poderFogo", "name": "Poder de Fogo", "short": "PdF", "min": 0, "max": 5, "defaultValue": 0, "cost": 1, "description": "Potência dos ataques à distância." }
+  ],
+  "creation": {
+    "totalPoints": 8,
+    "requireAllPoints": true,
+    "fields": [
+      { "id": "origem", "label": "Origem", "type": "text", "required": false, "placeholder": "De onde vem seu personagem?" },
+      { "id": "perfil", "label": "Perfil", "type": "select", "required": true, "options": ["Aventureiro", "Guardião", "Explorador", "Outro"] },
+      { "id": "historia", "label": "Conceito", "type": "textarea", "required": false, "placeholder": "Uma frase sobre quem ele é." }
+    ]
+  },
+  "resources": { "hp": { "max": "actor.resistencia * 5" }, "mana": { "max": "0" } },
+  "abilities": [
+    { "id": "precisao", "name": "Precisão", "cost": 1, "description": "Exemplo: +1 em ataques corpo a corpo e à distância.", "bonuses": { "attack": 1 } },
+    { "id": "reflexos", "name": "Reflexos", "cost": 1, "description": "Exemplo: +1 no total da defesa.", "bonuses": { "defense": 1 } },
+    { "id": "versatil", "name": "Versátil", "cost": 1, "description": "Exemplo: +1 em testes de atributo.", "bonuses": { "test": 1 } }
+  ],
+  "actions": [
+    { "id": "attack_melee", "name": "Corpo a corpo", "kind": "attack", "formula": "actor.habilidade + actor.forca + 1d6 + attackBonus", "description": "Habilidade + Força + d6 + bônus." },
+    { "id": "attack_ranged", "name": "À distância", "kind": "attack", "formula": "actor.habilidade + actor.poderFogo + 1d6 + attackBonus", "description": "Habilidade + Poder de Fogo + d6 + bônus." },
+    { "id": "attribute_test", "name": "Teste de atributo", "kind": "test", "formula": "actor[input.attribute] + 1d6 + testBonus", "description": "Atributo escolhido + d6 + bônus ≥ dificuldade." }
+  ],
+  "combat": {
+    "initiative": "actor.habilidade + 1d6",
+    "defense": "target.habilidade + target.armadura + 1d6 + defenseBonus",
+    "damage": "max(0, attack_total - defense_total)",
+    "hitWhen": ">",
+    "tieBreak": "roster_order",
+    "critical": false,
+    "fumble": false,
+    "escape": { "attribute": "habilidade", "difficulty": 6 }
+  }
+}

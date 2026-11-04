@@ -1,0 +1,43 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { createAdventure, changeAdventure, validateAdventure, reachableAdventurePlaces, finishAdventureTurn } from '../src/adventure.mjs';
+import { createPortoAuroraMission, validateMission, assertMissionLocations } from '../src/mission.mjs';
+import worker from './legacy-worker.mjs';
+const world=JSON.parse(await readFile(new URL('./fixtures/porto-aurora.json',import.meta.url)));
+const rules=JSON.parse(await readFile(new URL('../src/rules.json',import.meta.url)));
+const env={...world,id:'env'};
+const mission=createPortoAuroraMission(env);
+const hero={id:'hero',name:'Exploradora',attributes:{forca:3,habilidade:2,resistencia:2,armadura:1,poderFogo:0},abilities:[],fields:{perfil:'Explorador'}};
+const make=()=>createAdventure({name:'Exploração',mission,world,rules,character:hero});
+test('initial location, local movement and journal persist independently of source templates and mission progress',()=>{
+ let a=make();assert.equal(a.locationId,'portao-norte');assert.match(a.journal[0].text,/Portão Norte/);
+ assert.throws(()=>changeAdventure(a,{type:'move',placeId:'praca-central'}),/Inicie/);
+ a=changeAdventure(a,{type:'start'});const original=structuredClone(a);
+ assert.ok(reachableAdventurePlaces(a).some(p=>p.id==='praca-central'));assert.ok(!reachableAdventurePlaces(a).some(p=>p.id==='sala-fundos'));
+ assert.throws(()=>changeAdventure(a,{type:'move',placeId:'sala-fundos'}),/destino/);
+ a=changeAdventure(a,{type:'move',placeId:'praca-central'});assert.equal(a.locationId,'praca-central');assert.match(a.journal.at(-1).text,/Saiu de Portão Norte e chegou a Praça da Âncora/);
+ a=changeAdventure(a,{type:'move',placeId:'mercado'});a=changeAdventure(a,{type:'move',placeId:'sala-fundos'});assert.equal(a.locationId,'sala-fundos');
+ a=changeAdventure(a,{type:'move',placeId:'mercado'});assert.equal(a.locationId,'mercado');assert.equal(a.turn.number,4);
+ assert.deepEqual(a.progress,original.progress);assert.equal(original.locationId,'portao-norte');assert.deepEqual(validateAdventure(JSON.parse(JSON.stringify(a))),a);
+ assert.equal(mission.startPlaceId,'portao-norte');
+});
+test('map hierarchy supports outside/root and fallback location; invalid place and journal references are rejected',()=>{
+ let a=changeAdventure(make(),{type:'start'});
+ for (const placeId of ['porto-aurora','eldoria','arvandor',null,'arvandor']) a=changeAdventure(a,{type:'move',placeId});
+ assert.equal(a.locationId,'arvandor');
+ const old=structuredClone(a);delete old.locationId;delete old.journal;const restored=validateAdventure(old);assert.equal(restored.locationId,'portao-norte');assert.equal(restored.journal.length,1);
+ const bad=structuredClone(a);bad.locationId='missing';assert.throws(()=>validateAdventure(bad),/Localização/);
+ bad.locationId='arvandor';bad.journal[0].placeId='missing';assert.throws(()=>validateAdventure(bad),/diário/);
+ const m={...mission,startPlaceId:'missing'};assert.throws(()=>validateMission(m,[env]),/Local inicial/);
+ const w=structuredClone(world);w.places=w.places.filter(p=>p.id!=='portao-norte');assert.throws(()=>assertMissionLocations([mission],'env',w),/inicial/);
+});
+test('combat must occur where its NPC is located, while real local combat still updates HP and automatic objectives',async()=>{
+ const r=structuredClone(rules);r.combat.initiative='actor.habilidade';r.actions[0].formula='100';r.combat.damage='100';
+ let a=changeAdventure(createAdventure({name:'Encontro',mission,world,rules:r,character:hero}),{type:'start'});
+ const command={expectedTurn:0,seed:1,combat:{npcId:'bloqueador-mercado'}};
+ assert.throws(()=>finishAdventureTurn(a,command),/localização atual/);
+ const response=await worker.fetch(new Request('https://rpg.test/api/adventure/turn',{method:'POST',body:JSON.stringify({adventure:a,command})}));assert.equal(response.status,400);
+ a=changeAdventure(a,{type:'move',placeId:'mercado'});a=finishAdventureTurn(a,{...command,expectedTurn:a.turn.number});
+ assert.equal(a.locationId,'mercado');assert.equal(a.turn.npcs.find(n=>n.id==='bloqueador-mercado').defeated,true);assert.equal(a.progress.find(p=>p.id==='proteger-mercado').status,'completed');assert.ok(a.journal.some(e=>e.kind==='combat'));
+});

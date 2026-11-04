@@ -1,0 +1,46 @@
+import worker from '../worker/index.js';
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {createAdventureUI,prepareMapImage} from '../src/adventure-ui.mjs';
+const world=JSON.parse(readFileSync(new URL('./fixtures/porto-aurora.json',import.meta.url)));
+const rules=JSON.parse(readFileSync(new URL('../src/rules.json',import.meta.url)));
+const character={id:'hero',name:'Heroína',attributes:{forca:3,habilidade:2,resistencia:2,armadura:1,poderFogo:0},abilities:[],fields:{perfil:'Aventureiro'}};
+const dataUrl='data:image/webp;base64,UklGRg==';
+test('map image upload persists per environment and map level, reloads, rejects invalid files and preserves existing image on quota failure',async()=>{
+ const original={document:globalThis.document,localStorage:globalThis.localStorage,fetch:globalThis.fetch,createImageBitmap:globalThis.createImageBitmap};
+ const handlers=new Map(),stored=new Map();let markup='',ui,quota=false,pickerClicks=0,closed=0,drawn;
+ const fileInput={click(){pickerClicks++;}};
+ const canvas={getContext(){return {drawImage(...args){drawn=args;}};},toDataURL(){return dataUrl;}};
+ globalThis.document={addEventListener(type,fn){handlers.set(type,[...(handlers.get(type)||[]),fn]);},querySelector(){return fileInput;},createElement(type){assert.equal(type,'canvas');return canvas;}};
+ globalThis.createImageBitmap=async()=>({width:3200,height:1600,close(){closed++;}});
+ globalThis.fetch=(path,init)=>worker.fetch(new Request('https://rpg.test'+path,init));
+ globalThis.localStorage={getItem:key=>stored.get(key)||null,setItem(key,value){if(quota)throw new Error('quota');stored.set(key,value);},removeItem:key=>stored.delete(key)};
+ const dispatch=async(type,target)=>{for(const fn of handlers.get(type)||[])await fn({target,preventDefault(){}});};
+ const click=dataset=>dispatch('click',{closest:()=>({dataset,disabled:false})});
+ const field=(name,value)=>dispatch('change',{dataset:{adventureField:name},value});
+ const upload=async(file)=>{await click({adventureAction:'upload-map-image'});await dispatch('change',{id:'adventure-map-image-file',dataset:{},files:[file],value:'x'});};
+ const config={render(){markup=ui.html();},toast(){},getEnvironments:()=>[{...world,id:'env'}],getEnvironmentSnapshot:()=>world,getMissions:()=>[],getLegacyProgress:()=>[],getRules:()=>rules,getCharacters:()=>[character]};
+ try {
+  ui=createAdventureUI(config);ui.init();await click({adventureAction:'new'});await field('name','Mapas');await field('characterId','hero');await dispatch('submit',{id:'adventure-form'});await click({adventureAction:'start'});
+  assert.match(markup,/Carregar imagem de fundo/);
+  const adventuresBefore=stored.get('3det-adaptavel-adventures-v1');
+  await upload({type:'image/png',size:1000,name:'Cidade.png'});
+  assert.equal(pickerClicks,1);assert.equal(closed,1);assert.equal(canvas.width,1600);assert.equal(canvas.height,800);assert.equal(drawn[3],1600);
+  assert.match(markup,/map-background-image/);assert.match(markup,/aspect-ratio:1600\/800/);assert.match(markup,/data-adventure-move="mercado"/);
+  assert.equal(stored.get('3det-adaptavel-adventures-v1'),adventuresBefore);
+  const imageKey=[...stored.keys()].find(k=>k.startsWith('3det-adaptavel-map-image-v1:'));
+  assert.deepEqual(JSON.parse(imageKey.slice(imageKey.indexOf(':')+1)),['env','porto-aurora']);
+  const saved=stored.get(imageKey);
+  await upload({type:'image/svg+xml',size:20,name:'unsafe.svg'});assert.equal(stored.get(imageKey),saved);assert.match(markup,/PNG, JPG ou WebP/);
+  quota=true;await upload({type:'image/jpeg',size:1000,name:'Nova.jpg'});assert.equal(stored.get(imageKey),saved);assert.match(markup,/Não foi possível salvar a imagem/);quota=false;
+  await click({adventureMove:'porto-aurora'});assert.match(markup,/map-background-image/);
+  await click({adventureMapView:'nearby'});assert.doesNotMatch(markup,/map-background-image/);
+  await click({adventureMapView:'inside'});assert.match(markup,/map-background-image/);
+  await click({adventureMove:'mercado'});assert.doesNotMatch(markup,/map-background-image/);
+  await click({adventureMapView:'nearby'});assert.match(markup,/map-background-image/);
+  const restored=createAdventureUI({...config,render(){}});restored.init();await click({adventureOpen:JSON.parse(stored.get('3det-adaptavel-adventures-v1')).adventures[0].id});await click({adventureMapView:'nearby'});assert.match(restored.html(),/map-background-image/);
+  await click({adventureAction:'remove-map-image'});assert.equal(stored.has(imageKey),false);assert.doesNotMatch(restored.html(),/map-background-image/);
+  await assert.rejects(()=>prepareMapImage({type:'image/png',size:11*1024*1024}),/10 MB/);
+ }finally{Object.assign(globalThis,original);}
+});

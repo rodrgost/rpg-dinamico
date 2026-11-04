@@ -1,0 +1,12 @@
+import { readFile, writeFile } from 'node:fs/promises';
+const root = new URL('../', import.meta.url);
+const read = path => readFile(new URL(path, root), 'utf8');
+const [engine, page, app, style, rules, handler, world, worldUI, exampleWorld, mission, missionUI, adventure, adventureUI, theme, npcUI] = await Promise.all(['src/engine.mjs','src/index.html','src/app.js','src/style.css','src/rules.json','src/handler.mjs','src/world.mjs','src/world-ui.mjs','src/world.json','src/mission.mjs','src/mission-ui.mjs','src/adventure.mjs','src/adventure-ui.mjs','src/theme.js','src/npc-ui.mjs'].map(read));
+const constants = { ENGINE: engine, PAGE: page, APP: app, STYLE: style, DEFAULT_RULES: JSON.parse(rules), WORLD_ENGINE: world, WORLD_UI: worldUI, EXAMPLE_WORLD: JSON.parse(exampleWorld), MISSION_ENGINE: mission, MISSION_UI: missionUI, ADVENTURE_ENGINE: adventure, ADVENTURE_UI: adventureUI, THEME: theme, NPC_UI: npcUI };
+// Keep each domain's private helpers scoped; expose only the world validator to the server.
+const worldModule = '\nconst { validateWorld, validateNPC, validateCondition, conditionLeaves, validateFormula, formulaReferences, calculateBoolean, regionalEncounterTable, routeBetween, worldClock, ancestors, WorldError } = (() => {\n' + world.replace(/^export /gm, '') + '\nreturn { validateWorld, validateNPC, validateCondition, conditionLeaves, validateFormula, formulaReferences, calculateBoolean, regionalEncounterTable, routeBetween, worldClock, ancestors, WorldError };\n})();\n';
+const missionModule = '\nconst { validateMission, validateMissionDocument, evaluateMissionCondition, resolveMissionNPCs, validateFormulaBindings, missionIsComplete, MissionError } = (() => {\n' + mission.replace(/^import .*;$/gm, '').replace(/^export /gm, '') + '\nreturn { validateMission, validateMissionDocument, evaluateMissionCondition, resolveMissionNPCs, validateFormulaBindings, missionIsComplete, MissionError };\n})();\n';
+const adventureModule = '\nconst { validateAdventure, finishAdventureTurn, AdventureError } = (() => {\n' + adventure.replace(/^import .*;$/gm, '').replace(/^export /gm, '') + '\nreturn { validateAdventure, finishAdventureTurn, AdventureError };\n})();\n';
+const output = engine.replace(/^export /gm, '') + worldModule + missionModule + adventureModule + Object.entries(constants).map(([key, value]) => 'const ' + key + ' = ' + JSON.stringify(value) + ';').join('\n') + '\n' + handler;
+await writeFile(new URL('worker/index.js', root), output);
+console.log('Assembled deterministic Worker and browser assets.');

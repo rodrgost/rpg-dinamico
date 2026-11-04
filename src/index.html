@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Simulador privado de RPG 3D&T Adaptável com regras JSON, personagens, cenários, missões e combate por rodada.">
+  <meta name="theme-color" content="#143d39">
+  <title>3D&T Adaptável · Laboratório de RPG</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23143d39'/%3E%3Ctext x='32' y='43' text-anchor='middle' fill='%23dcebc2' font-size='36' font-family='serif'%3E6%3C/text%3E%3C/svg%3E">
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="3D&T Adaptável, início"><span class="brand-mark">3</span><span>3D&T<span class="brand-sub">ADAPTÁVEL</span></span></a>
+    <p class="nav-label">LABORATÓRIO DE RPG</p>
+    <nav aria-label="Áreas do simulador">
+      <button type="button" data-tab="arena" class="nav-item active"><span aria-hidden="true">⚔</span> Combate <span class="nav-arrow">↗</span></button>
+      <button type="button" data-tab="characters" class="nav-item"><span aria-hidden="true">♙</span> Personagens <span class="nav-count" id="roster-count">0</span></button>
+      <button type="button" data-tab="world" class="nav-item"><span aria-hidden="true">◇</span> Cenários</button>
+      <button type="button" data-tab="missions" class="nav-item"><span aria-hidden="true">◎</span> Missões</button>
+      <button type="button" data-tab="adventures" class="nav-item"><span aria-hidden="true">↗</span> Aventuras</button>
+    </nav>
+    <div class="sidebar-bottom"><span class="tiny-dot"></span> Acesso privado<p>Crie. Role. Adapte.<br>As regras estão nas suas mãos.</p><span class="version">MVP · MOTOR BASEADO EM DADOS</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><button type="button" id="adventure-back" class="btn" data-adventure-action="list" hidden>← Voltar às aventuras</button><span id="breadcrumb">Laboratório / <strong>Arena de combate</strong></span><div class="topbar-actions"><button type="button" class="btn theme-toggle" id="theme-toggle" aria-label="Ativar modo noturno" aria-pressed="false">☾ Modo noturno</button><span class="privacy"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="9" width="10" height="8" rx="2"/><path d="M7 9V6a3 3 0 0 1 6 0v3"/></svg> Só você</span></div></header>
+    <main id="main"><div class="loading"><span class="spinner"></span> Preparando o laboratório…</div></main>
+    <footer>3D&T Adaptável <span>Regras externas. Resultados transparentes.</span><span id="save-state">Sessão neste navegador</span></footer>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="rules-file" accept=".json,application/json" hidden>
+  <input type="file" id="world-file" accept=".json,application/json" hidden>
+  <input type="file" id="mission-file" accept=".json,application/json" hidden>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

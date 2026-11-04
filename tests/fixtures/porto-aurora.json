@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "name": "Mundo de Arvandor",
+  "description": "Um cenário de exemplo. A hierarquia é livre: use planetas, países, cidades, construções ou salas.",
+  "places": [
+    {
+      "id": "arvandor",
+      "parentId": null,
+      "name": "Arvandor",
+      "type": "Planeta",
+      "description": "Um mundo de mares extensos, antigas cordilheiras e cidades independentes.",
+      "details": {
+        "clima": "Variado",
+        "escala": "Planetária"
+      },
+      "x": 50,
+      "y": 50
+    },
+    {
+      "id": "eldoria",
+      "parentId": "arvandor",
+      "name": "Eldoria",
+      "type": "País",
+      "description": "Um país de vales férteis, estradas de pedra e pequenos portos.",
+      "details": {
+        "clima": "Temperado",
+        "idioma": "Comum"
+      },
+      "x": 35,
+      "y": 65
+    },
+    {
+      "id": "porto-aurora",
+      "parentId": "eldoria",
+      "name": "Porto Aurora",
+      "type": "Cidade",
+      "description": "Uma cidade costeira com ruas estreitas, praça central, cais, farol e serviços distribuídos entre os bairros. O Mercado das Marés liga o centro ao porto.",
+      "details": {
+        "populacao": 12000,
+        "arquitetura": "Pedra clara e telhados de ardósia"
+      },
+      "x": 70,
+      "y": 40
+    },
+    {
+      "id": "mercado",
+      "parentId": "porto-aurora",
+      "name": "Mercado das Marés",
+      "type": "Estabelecimento",
+      "description": "Uma construção coberta, iluminada por grandes janelas e voltada para a praça central.",
+      "details": {
+        "horario": "Do nascer ao pôr do sol",
+        "acesso": "Entrada pela praça"
+      },
+      "x": 45,
+      "y": 55
+    },
+    {
+      "id": "sala-fundos",
+      "parentId": "mercado",
+      "name": "Sala dos fundos",
+      "type": "Sala",
+      "description": "Uma sala de teto baixo, paredes de pedra e uma janela voltada para o cais.",
+      "details": {
+        "iluminacao": "Natural durante o dia",
+        "dimensoes": "6 × 4 metros"
+      },
+      "x": 80,
+      "y": 30
+    },
+    {
+      "id": "praca-central",
+      "parentId": "porto-aurora",
+      "name": "Praça da Âncora",
+      "type": "Praça",
+      "description": "O centro de Porto Aurora, com um poço de pedra e caminhos que ligam o mercado, o templo e a sede da guarda.",
+      "details": {
+        "pavimento": "Pedras claras",
+        "movimento": "Intenso durante o dia"
+      },
+      "x": 48,
+      "y": 42
+    },
+    {
+      "id": "cais",
+      "parentId": "porto-aurora",
+      "name": "Cais das Velas",
+      "type": "Cais",
+      "description": "Um conjunto de píeres de madeira junto à enseada, ligado ao mercado por uma rua de armazéns.",
+      "details": {
+        "acesso": "Pela avenida costeira",
+        "iluminacao": "Lampiões nos píeres"
+      },
+      "x": 82,
+      "y": 65
+    },
+    {
+      "id": "taverna",
+      "parentId": "porto-aurora",
+      "name": "Taverna do Farol",
+      "type": "Taverna",
+      "description": "Um salão de vigas escuras e mesas coletivas onde viajantes e moradores se reúnem perto do porto.",
+      "details": {
+        "horario": "Do entardecer à madrugada",
+        "arquitetura": "Madeira e alvenaria"
+      },
+      "x": 62,
+      "y": 58
+    },
+    {
+      "id": "estalagem",
+      "parentId": "porto-aurora",
+      "name": "Estalagem Brisa Serena",
+      "type": "Estalagem",
+      "description": "Uma casa de dois andares com varanda, pátio interno e quartos voltados para uma rua tranquila.",
+      "details": {
+        "andares": 2,
+        "acesso": "Entrada pelo pátio"
+      },
+      "x": 34,
+      "y": 46
+    },
+    {
+      "id": "ferraria",
+      "parentId": "porto-aurora",
+      "name": "Ferraria Pedra e Brasa",
+      "type": "Oficina",
+      "description": "Uma oficina de pedra com forja coberta e área de trabalho aberta, afastada das ruas mais movimentadas.",
+      "details": {
+        "horario": "Durante o dia",
+        "ventilacao": "Chaminé alta e frente aberta"
+      },
+      "x": 25,
+      "y": 62
+    },
+    {
+      "id": "templo",
+      "parentId": "porto-aurora",
+      "name": "Templo da Aurora",
+      "type": "Templo",
+      "description": "Um templo de paredes claras situado numa pequena elevação, com escadaria ampla e jardins laterais.",
+      "details": {
+        "acesso": "Escadaria e caminho lateral",
+        "cenário": "Silencioso"
+      },
+      "x": 50,
+      "y": 24
+    },
+    {
+      "id": "biblioteca",
+      "parentId": "porto-aurora",
+      "name": "Biblioteca dos Navegantes",
+      "type": "Biblioteca",
+      "description": "Um edifício de janelas altas e salas de leitura, próximo à praça e ao caminho do farol.",
+      "details": {
+        "horario": "Manhã e tarde",
+        "arquitetura": "Pedra e grandes janelas"
+      },
+      "x": 65,
+      "y": 32
+    },
+    {
+      "id": "guarda",
+      "parentId": "porto-aurora",
+      "name": "Sede da Guarda do Porto",
+      "type": "Quartel",
+      "description": "Uma construção murada com pátio central e torre de observação, próxima à entrada norte da cidade.",
+      "details": {
+        "acesso": "Portaria voltada para a rua principal",
+        "estrutura": "Muro de pedra e torre"
+      },
+      "x": 30,
+      "y": 25
+    },
+    {
+      "id": "farol",
+      "parentId": "porto-aurora",
+      "name": "Farol da Ponta Clara",
+      "type": "Farol",
+      "description": "Uma torre de pedra sobre um promontório, com vista para a enseada e os acessos marítimos.",
+      "details": {
+        "acesso": "Caminho costeiro em subida",
+        "altura": "24 metros"
+      },
+      "x": 91,
+      "y": 28
+    },
+    {
+      "id": "portao-norte",
+      "parentId": "porto-aurora",
+      "name": "Portão Norte",
+      "type": "Portão",
+      "description": "A passagem principal da estrada para o interior, entre duas torres baixas e um trecho da muralha.",
+      "details": {
+        "acesso": "Estrada de Eldoria",
+        "estrutura": "Arco de pedra e portões de madeira"
+      },
+      "x": 18,
+      "y": 12
+    },
+    {
+      "id": "jardim",
+      "parentId": "porto-aurora",
+      "name": "Jardim das Fontes",
+      "type": "Jardim",
+      "description": "Uma área arborizada com fontes, bancos e caminhos de cascalho no setor sul da cidade.",
+      "details": {
+        "vegetacao": "Árvores de sombra e canteiros",
+        "acesso": "Livre durante o dia"
+      },
+      "x": 20,
+      "y": 82
+    }
+  ],
+  "npcs": [
+    {
+      "id": "guarda-portao",
+      "name": "Ivo, guarda do Portão Norte",
+      "description": "Um guarda de capa gasta orienta quem chega a Porto Aurora e mantém livre a passagem da estrada.",
+      "placeId": "portao-norte",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "mara-taverneira",
+      "name": "Mara, taverneira do Farol",
+      "description": "A proprietária recebe viajantes no salão e conhece a rotina de quem trabalha no cais.",
+      "placeId": "taverna",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "arquivista-biblioteca",
+      "name": "Lia, arquivista dos Navegantes",
+      "description": "Responsável pelas cartas da enseada e pelas referências de sinais costeiros, organiza as consultas da biblioteca.",
+      "placeId": "biblioteca",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "selma-mercadora",
+      "name": "Selma, mercadora das Marés",
+      "description": "Coordena as bancas e conhece os responsáveis pelos depósitos de mantimentos.",
+      "placeId": "mercado",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "tomas-estivador",
+      "name": "Tomás, encarregado dos estivadores",
+      "description": "Organiza o desembarque das cargas e ajuda a identificar embarcações e horários suspeitos.",
+      "placeId": "cais",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "bento-estalajadeiro",
+      "name": "Bento, anfitrião da Brisa Serena",
+      "description": "Acolhe viajantes e moradores que precisam de abrigo durante a tempestade.",
+      "placeId": "estalagem",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "ines-ferreira",
+      "name": "Inês, ferreira de Pedra e Brasa",
+      "description": "Conserta ferramentas e separa componentes para os mecanismos do farol.",
+      "placeId": "ferraria",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "elisa-curandeira",
+      "name": "Elisa, cuidadora do Templo da Aurora",
+      "description": "Atende feridos e mantém as reservas de mantimentos e materiais de primeiros socorros.",
+      "placeId": "templo",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "helena-comandante",
+      "name": "Helena, comandante da guarda",
+      "description": "Recebe relatos, confere evidências e coordena intervenções no porto.",
+      "placeId": "guarda",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "raul-faroleiro",
+      "name": "Raul, faroleiro da Ponta Clara",
+      "description": "Conhece as lentes e os sinais do farol e pode orientar seu reparo.",
+      "placeId": "farol",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "dora-jardineira",
+      "name": "Dora, zeladora das fontes",
+      "description": "Cuida dos caminhos e percebe pegadas e objetos deixados entre os canteiros.",
+      "placeId": "jardim",
+      "combatant": null,
+      "presence": null
+    },
+    {
+      "id": "vera-mensageira",
+      "name": "Vera, mensageira da praça",
+      "description": "Reúne os pedidos de ajuda da cidade e apresenta a situação aos recém-chegados.",
+      "placeId": "praca-central",
+      "combatant": null,
+      "presence": null
+    }
+  ]
+}

@@ -1,0 +1,548 @@
+{
+  "time": {
+    "startDay": 1,
+    "startMinute": 480,
+    "minutesPerTurn": 60
+  },
+  "turnRules": [
+    {
+      "id": "descanso",
+      "placeId": "condado",
+      "trigger": "turn_end",
+      "condition": {
+        "operator": "eq",
+        "left": {
+          "ref": "turno.acao"
+        },
+        "right": "rest"
+      },
+      "effects": [
+        {
+          "target": "personagem.hp",
+          "formula": "min(personagem.hpMax, personagem.hp + 1)"
+        }
+      ]
+    },
+    {
+      "id": "descanso",
+      "placeId": "valfenda",
+      "trigger": "turn_end",
+      "condition": {
+        "operator": "eq",
+        "left": {
+          "ref": "turno.acao"
+        },
+        "right": "rest"
+      },
+      "effects": [
+        {
+          "target": "personagem.hp",
+          "formula": "min(personagem.hpMax, personagem.hp + 2)"
+        }
+      ]
+    },
+    {
+      "id": "ar-venenoso",
+      "placeId": "mordor",
+      "trigger": "turn_end",
+      "condition": true,
+      "effects": [
+        {
+          "target": "personagem.hp",
+          "formula": "max(0, personagem.hp - 1)"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "estrada-condado-valfenda",
+      "name": "Estrada para Valfenda",
+      "description": "Pelas terras de Eriador, entre o Condado e o refúgio élfico.",
+      "fromPlaceId": "condado",
+      "toPlaceId": "valfenda",
+      "distance": 6
+    },
+    {
+      "id": "caminho-eriador-rohan",
+      "name": "Caminho dos Cavaleiros",
+      "description": "Uma longa travessia pelas terras da Terra Média.",
+      "fromPlaceId": "eriador",
+      "toPlaceId": "rohan",
+      "distance": 8
+    },
+    {
+      "id": "caminho-rohan-mordor",
+      "name": "Caminho das Sombras",
+      "description": "Estradas perigosas em direção às terras sombrias.",
+      "fromPlaceId": "rohan",
+      "toPlaceId": "mordor",
+      "distance": 7
+    }
+  ],
+  "encounters": [
+    {
+      "id": "salteadores",
+      "name": "Salteadores da estrada",
+      "description": "Um salteador surge entre as pedras e exige que você pare.",
+      "participants": [
+        {
+          "id": "salteador",
+          "name": "Salteador",
+          "description": "Um assaltante das estradas de Eriador.",
+          "combatant": {
+            "attributes": {
+              "forca": 2,
+              "habilidade": 2,
+              "resistencia": 1,
+              "armadura": 1,
+              "poderFogo": 0
+            },
+            "abilities": [],
+            "fields": {
+              "perfil": "Outro"
+            }
+          }
+        }
+      ],
+      "options": [
+        {
+          "id": "enfrentar",
+          "label": "Enfrentar",
+          "kind": "combat",
+          "text": "",
+          "duringCombat": false
+        }
+      ],
+      "condition": null,
+      "hostile": true
+    },
+    {
+      "id": "lobos",
+      "name": "Lobos nas trilhas",
+      "description": "Um lobo observa seus passos e bloqueia a passagem.",
+      "participants": [
+        {
+          "id": "lobo",
+          "name": "Lobo selvagem",
+          "description": "Um animal faminto e atento.",
+          "combatant": {
+            "attributes": {
+              "forca": 2,
+              "habilidade": 2,
+              "resistencia": 1,
+              "armadura": 0,
+              "poderFogo": 0
+            },
+            "abilities": [],
+            "fields": {
+              "perfil": "Outro"
+            }
+          }
+        }
+      ],
+      "options": [
+        {
+          "id": "enfrentar",
+          "label": "Enfrentar",
+          "kind": "combat",
+          "text": "",
+          "duringCombat": false
+        }
+      ],
+      "condition": null,
+      "hostile": true
+    },
+    {
+      "id": "mercador-viajante",
+      "name": "Mercador viajante",
+      "description": "Um mercador descansa junto à estrada e oferece notícias das vilas próximas.",
+      "participants": [
+        {
+          "id": "mercador",
+          "name": "Mercador viajante",
+          "description": "Um viajante amistoso.",
+          "combatant": null
+        }
+      ],
+      "options": [
+        {
+          "id": "conversar",
+          "label": "Ouvir notícias",
+          "kind": "resolve",
+          "text": "Você troca histórias com o mercador e ouve notícias das estradas. Ele se despede e retoma a viagem.",
+          "duringCombat": false
+        },
+        {
+          "id": "seguir",
+          "label": "Seguir viagem",
+          "kind": "resolve",
+          "text": "Você cumprimenta o mercador e segue viagem.",
+          "duringCombat": false
+        }
+      ],
+      "condition": null,
+      "hostile": false
+    },
+    {
+      "id": "viajante-ferido",
+      "name": "Viajante ferido",
+      "description": "Um viajante está sentado à beira do caminho, com um tornozelo machucado.",
+      "participants": [
+        {
+          "id": "viajante",
+          "name": "Viajante ferido",
+          "description": "Precisa de uma breve ajuda para seguir.",
+          "combatant": null
+        }
+      ],
+      "options": [
+        {
+          "id": "ajudar",
+          "label": "Ajudar o viajante",
+          "kind": "resolve",
+          "text": "Você improvisa um apoio para o viajante. Ele agradece e segue para um lugar seguro.",
+          "duringCombat": false
+        },
+        {
+          "id": "seguir",
+          "label": "Seguir viagem",
+          "kind": "resolve",
+          "text": "Você segue viagem, deixando o viajante à espera de ajuda.",
+          "duringCombat": false
+        }
+      ],
+      "condition": null,
+      "hostile": false
+    }
+  ],
+  "npcs": [
+    {
+      "id": "frodo",
+      "name": "Frodo Bolseiro",
+      "description": "O Portador do Anel, um Hobbit relutante com um grande fardo.",
+      "placeId": "bolsao",
+      "combatant": {
+        "attributes": {
+          "forca": 1,
+          "habilidade": 2,
+          "resistencia": 3,
+          "armadura": 2,
+          "poderFogo": 0
+        },
+        "abilities": [],
+        "fields": {
+          "origem": "O Condado",
+          "perfil": "Aventureiro",
+          "historia": "Equipamento: Ferroada e Cota de Mithril."
+        }
+      },
+      "hostile": false,
+      "presence": null
+    },
+    {
+      "id": "elrond",
+      "name": "Mestre Elrond",
+      "description": "O Senhor de Valfenda, sábio e poderoso entre os Elfos.",
+      "placeId": "casa-elrond",
+      "combatant": null,
+      "hostile": false,
+      "presence": null
+    },
+    {
+      "id": "uruk-hai-batedor",
+      "name": "Batedor Uruk-hai",
+      "description": "Um orc forte e rápido, enviado de Isengard.",
+      "placeId": "rohan",
+      "combatant": {
+        "attributes": {
+          "forca": 3,
+          "habilidade": 2,
+          "resistencia": 2,
+          "armadura": 1,
+          "poderFogo": 0
+        },
+        "abilities": [],
+        "fields": {
+          "origem": "Isengard",
+          "perfil": "Guardião",
+          "historia": "Lealdade: Saruman."
+        }
+      },
+      "hostile": true,
+      "presence": null
+    },
+    {
+      "id": "gollum",
+      "name": "Gollum",
+      "description": "Uma criatura corrompida pelo Anel, segue Frodo sorrateiramente.",
+      "placeId": "montanha-perdicao",
+      "combatant": {
+        "attributes": {
+          "forca": 1,
+          "habilidade": 4,
+          "resistencia": 3,
+          "armadura": 0,
+          "poderFogo": 0
+        },
+        "abilities": [],
+        "fields": {
+          "origem": "Desconhecida (antigo Hobbit)",
+          "perfil": "Explorador",
+          "historia": "Obsessão: O Precioso."
+        }
+      },
+      "hostile": false,
+      "presence": null
+    },
+    {
+      "id": "espectro-anel",
+      "name": "Nazgûl",
+      "description": "Servo terrível de Sauron, caçando o Portador do Anel.",
+      "placeId": "mordor",
+      "combatant": {
+        "attributes": {
+          "forca": 2,
+          "habilidade": 2,
+          "resistencia": 2,
+          "armadura": 2,
+          "poderFogo": 0
+        },
+        "abilities": [],
+        "fields": {
+          "origem": "Mordor",
+          "perfil": "Outro",
+          "historia": "Aura: Terror."
+        }
+      },
+      "hostile": true,
+      "presence": {
+        "operator": "eq",
+        "left": {
+          "ref": "npcs.frodo.derrotado"
+        },
+        "right": false
+      }
+    }
+  ],
+  "schemaVersion": 1,
+  "name": "Eriador e Além",
+  "description": "Um cenário baseado na Terra Média, focando em regiões icônicas como o Condado, Valfenda, Rohan e Mordor.",
+  "places": [
+    {
+      "encounterTable": {
+        "mode": "replace",
+        "chance": 30,
+        "cooldownTurns": 3,
+        "entries": [
+          {
+            "encounterId": "salteadores",
+            "weight": 3
+          },
+          {
+            "encounterId": "lobos",
+            "weight": 4
+          },
+          {
+            "encounterId": "mercador-viajante",
+            "weight": 2
+          },
+          {
+            "encounterId": "viajante-ferido",
+            "weight": 1
+          }
+        ]
+      },
+      "id": "terra-media",
+      "parentId": null,
+      "name": "Terra Média",
+      "type": "Continente",
+      "x": 50,
+      "y": 50,
+      "description": "O vasto continente onde ocorrem as grandes aventuras e guerras pelo Anel.",
+      "details": {
+        "clima": "Temperado a frio no norte, árido no sul e leste",
+        "habitado_por": [
+          "Elfos",
+          "Anões",
+          "Homens",
+          "Hobbits",
+          "Orcs"
+        ]
+      }
+    },
+    {
+      "encounterTable": {
+        "mode": "extend",
+        "chance": 35,
+        "entries": []
+      },
+      "id": "eriador",
+      "parentId": "terra-media",
+      "name": "Eriador",
+      "type": "Região",
+      "x": 30,
+      "y": 40,
+      "description": "As terras ermas a oeste das Montanhas Sombrias.",
+      "details": {}
+    },
+    {
+      "encounterTable": {
+        "mode": "replace",
+        "chance": 20,
+        "cooldownTurns": 3,
+        "entries": [
+          {
+            "encounterId": "lobos",
+            "weight": 1
+          },
+          {
+            "encounterId": "mercador-viajante",
+            "weight": 3
+          },
+          {
+            "encounterId": "viajante-ferido",
+            "weight": 2
+          }
+        ]
+      },
+      "id": "condado",
+      "parentId": "eriador",
+      "name": "O Condado",
+      "type": "Comarca",
+      "x": 20,
+      "y": 50,
+      "description": "Terra pacífica e verdejante, lar dos Hobbits.",
+      "details": {
+        "produto_principal": "Erva-de-fumo"
+      }
+    },
+    {
+      "encounterTable": {
+        "mode": "none",
+        "entries": []
+      },
+      "id": "bolsao",
+      "parentId": "condado",
+      "name": "Bolsão",
+      "type": "Residência",
+      "x": 50,
+      "y": 50,
+      "description": "A toca de Hobbit sob a Colina, lar de Bilbo e Frodo.",
+      "details": {
+        "portas": "Redondas",
+        "despensa": "Sempre cheia"
+      }
+    },
+    {
+      "encounterTable": {
+        "mode": "none",
+        "entries": []
+      },
+      "id": "valfenda",
+      "parentId": "eriador",
+      "name": "Valfenda",
+      "type": "Refúgio Élfico",
+      "x": 80,
+      "y": 30,
+      "description": "O Último Lar Amigo, governado por Elrond.",
+      "details": {
+        "magia": "Abundante e protetora"
+      }
+    },
+    {
+      "encounterTable": {
+        "mode": "none",
+        "entries": []
+      },
+      "id": "casa-elrond",
+      "parentId": "valfenda",
+      "name": "Casa de Elrond",
+      "type": "Palácio",
+      "x": 50,
+      "y": 50,
+      "description": "Local de descanso, cura e sabedoria.",
+      "details": {}
+    },
+    {
+      "encounterTable": {
+        "mode": "extend",
+        "chance": 35,
+        "entries": [
+          {
+            "encounterId": "salteadores",
+            "weight": 5
+          }
+        ]
+      },
+      "id": "rohan",
+      "parentId": "terra-media",
+      "name": "Rohan",
+      "type": "Reino",
+      "x": 50,
+      "y": 70,
+      "description": "A terra dos Senhores dos Cavalos.",
+      "details": {
+        "cultura": "Equestre e guerreira"
+      }
+    },
+    {
+      "encounterTable": {
+        "mode": "none",
+        "entries": []
+      },
+      "id": "edoras",
+      "parentId": "rohan",
+      "name": "Edoras",
+      "type": "Capital",
+      "x": 40,
+      "y": 60,
+      "description": "A capital de Rohan, construída em uma colina.",
+      "details": {}
+    },
+    {
+      "encounterTable": {
+        "mode": "replace",
+        "chance": 40,
+        "cooldownTurns": 3,
+        "entries": [
+          {
+            "encounterId": "lobos",
+            "weight": 5
+          },
+          {
+            "encounterId": "salteadores",
+            "weight": 1
+          }
+        ]
+      },
+      "id": "mordor",
+      "parentId": "terra-media",
+      "name": "Mordor",
+      "type": "Reino Sombrio",
+      "x": 80,
+      "y": 80,
+      "description": "A terra negra governada por Sauron.",
+      "details": {
+        "ar": "Venenoso",
+        "perigo": "Extremo"
+      }
+    },
+    {
+      "encounterTable": {
+        "mode": "none",
+        "entries": []
+      },
+      "id": "montanha-perdicao",
+      "parentId": "mordor",
+      "name": "Montanha da Perdição",
+      "type": "Vulcão",
+      "x": 30,
+      "y": 50,
+      "description": "O vulcão onde o Um Anel foi forjado.",
+      "details": {
+        "calor": "Insuportável"
+      }
+    }
+  ]
+}

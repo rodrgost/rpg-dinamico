@@ -1,0 +1,74 @@
+{
+  "salteadores": [
+    {
+      "id": "negociar",
+      "label": "Tentar negociar",
+      "kind": "test",
+      "text": "O salteador aceita deixá-lo passar.",
+      "attribute": "habilidade",
+      "difficulty": 6,
+      "failureText": "O salteador recusa seu argumento.",
+      "duringCombat": false
+    },
+    {
+      "id": "enfrentar",
+      "label": "Enfrentar",
+      "kind": "combat",
+      "text": "",
+      "duringCombat": false
+    },
+    {
+      "id": "contornar",
+      "label": "Contornar e seguir viagem",
+      "kind": "resolve",
+      "text": "Você evita o confronto e segue seu caminho.",
+      "duringCombat": false
+    },
+    {
+      "id": "escapar",
+      "label": "Tentar escapar",
+      "kind": "test",
+      "text": "Você encontra uma rota segura e deixa o confronto para trás.",
+      "attribute": "habilidade",
+      "difficulty": 6,
+      "failureText": "Você não consegue escapar desta vez.",
+      "duringCombat": true
+    }
+  ],
+  "lobos": [
+    {
+      "id": "afastar",
+      "label": "Tentar afugentar",
+      "kind": "test",
+      "text": "O lobo recua e desaparece entre as árvores.",
+      "attribute": "forca",
+      "difficulty": 6,
+      "failureText": "O lobo continua bloqueando o caminho.",
+      "duringCombat": false
+    },
+    {
+      "id": "enfrentar",
+      "label": "Enfrentar",
+      "kind": "combat",
+      "text": "",
+      "duringCombat": false
+    },
+    {
+      "id": "contornar",
+      "label": "Contornar e seguir viagem",
+      "kind": "resolve",
+      "text": "Você evita o confronto e segue seu caminho.",
+      "duringCombat": false
+    },
+    {
+      "id": "escapar",
+      "label": "Tentar escapar",
+      "kind": "test",
+      "text": "Você encontra uma rota segura e deixa o confronto para trás.",
+      "attribute": "habilidade",
+      "difficulty": 6,
+      "failureText": "Você não consegue escapar desta vez.",
+      "duringCombat": true
+    }
+  ]
+}
